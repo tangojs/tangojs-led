@@ -1,0 +1,69 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="x-led.html">
+<script src="node_modules/tangojs-web-components/dist/tangojs-web-components.js"></script>
+
+<dom-module id="tangojs-led">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    #root {
+      grid-template-columns: 1fr 1fr 1fr 30px 20px;
+    }
+    #name  { grid-column: 1; }
+    #value { grid-column: 2; }
+    #led   { grid-column: 5; }
+    </style>
+
+  <div id="root">
+    <span>[[info.name]]</span>
+    <span>[[attribute.value]]</span>
+    <x-led on=true color='[[color]]'></x-led>
+  </div>
+
+  </template>
+
+  <script>
+    /**
+     * `tangojs-led`
+     * TangoJS LED
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class TangojsLed extends tangojs.web.util.mixins.withTangoAttribute(Polymer.Element) {
+      static get is() { return 'tangojs-led'; }
+
+      onModelRead (states) {
+	super.onModelRead(states)
+        const devState = states[this.model]
+        const [color, on] = this.getLedSetup(devState.value)
+        this.value = devState.value
+        this.color = color
+	console.log('My color should be '+color+'for the state '+devState.value)
+        this.on = on
+      }
+
+      getLedSetup (devState) {
+        switch (devState) {
+         // case tangojs.core.tango.DevState.ON: return ['#80FF00', true]
+          case 'ON': return ['#80FF00', true]
+         // case tangojs.core.tango.DevState.OFF: return ['#80FF00', false]
+          case 'OFF': return ['#80FF00', false]
+         // case tangojs.core.tango.DevState.RUNNING: return ['#0080FF', true]
+          case 'RUNNING': return ['#0080FF', true]
+         // case tangojs.core.tango.DevState.FAULT: return ['#FF0000', true]
+          case 'FAULT': return ['#FF0000', true]
+         // case tangojs.core.tango.DevState.ALARM: return ['#FF8000', true]
+          case 'ALARM': return ['#FF8000', true]
+          default: return ['#FF00FF', true]
+        }
+      }
+
+    }
+
+    window.customElements.define(TangojsLed.is, TangojsLed);
+  </script>
+</dom-module>

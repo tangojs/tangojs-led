@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<link rel="import" href="../polymer/polymer-element.html">
+
+<dom-module id="x-led">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      span.led-container {
+        background-size: cover;
+        background: linear-gradient(to bottom,
+                                    rgba(226,226,226,1) 0%,
+                                    rgba(219,219,219,1) 50%,
+                                    rgba(209,209,209,1) 51%,
+                                    rgba(254,254,254,1) 100%);
+        border-radius: 50%;
+        width: inherit;
+        height: inherit;
+      }
+      span.led {
+        margin: 0 auto;
+        width: 20px;
+        height: 20px;
+        display: inline-block;
+        border-radius: 50%;
+	background-color: var(--x-led-background-color);
+	box-shadow: var(--x-led-box-shadow));
+      }
+    </style>
+    <span class="led-container">
+      <span class="led"></span>
+    </span>
+  </template>
+
+  <script>
+    const hexColorRegex = /^#([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})$/;
+    /**
+     * `x-led`
+     * Simple LED
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class XLed extends Polymer.Element {
+      static get is() { return 'x-led'; }
+      static get properties() {
+        return {
+          on: {
+            type: Boolean,
+            value: false,
+            observer: 'toggleLed'
+          },
+          color: {
+            type: String,
+            value: '#000000',
+            observer: 'updateColorStyle'
+          }
+        };
+      }
+      constructor(){
+        super();
+      }
+
+      toggleLed () {
+        this.updateColorStyle(this.color)
+      }
+
+      updateColorStyle (hexColor) {
+
+        const [_, hexR, hexG, hexB] = hexColor.match(hexColorRegex)
+
+        const [decR, decG, decB] = [hexR, hexG, hexB]
+          .map(h => parseInt(h, 16))
+        const [insR, insG, insB] = [decR, decG, decB]
+          .map(d => parseInt(d / 8.0 + 13.0))
+        const [colR, colG, colB] = [decR, decG, decB]
+          .map(d => this.on ? d : parseInt(d*0.5))
+
+        const shadow = this.on
+          ? `0 -1px 7px 1px rgba(${decR}, ${decG}, ${decB}, 0.2),
+            inset 0 -1px 9px rgb(${insR}, ${insG}, ${insB}),
+            0 2px 12px rgba(${decR}, ${decG}, ${decB}, 0.5)`
+          : `inset 0 -1px 9px rgb(${insR}, ${insG}, ${insB})`
+
+        const bcolor = `rgb(${colR}, ${colG}, ${colB})`
+
+	this.updateStyles(
+	  {'--x-led-background-color': bcolor,
+	   '--x-led-box-shadow': shadow});
+      }
+    }
+
+    window.customElements.define(XLed.is, XLed);
+  </script>
+</dom-module>
