@@ -1,6 +1,6 @@
 <link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="x-led.html">
-<script src="node_modules/tangojs-web-components/dist/tangojs-web-components.js"></script>
+<link rel="import" href="../tangojs-polymer/with-tango-attribute.html">
 
 <dom-module id="tangojs-led">
   <template>
@@ -33,7 +33,7 @@
      * @polymer
      * @demo demo/index.html
      */
-    class TangojsLed extends tangojs.web.util.mixins.withTangoAttribute(Polymer.Element) {
+    class TangojsLed extends Tangojs.withTangoAttribute(Polymer.Element) {
       static get is() { return 'tangojs-led'; }
 
       onModelRead (states) {
